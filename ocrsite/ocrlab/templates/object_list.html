@@ -1,0 +1,45 @@
+{% extends "theme_base.html" %}
+
+{% load i18n %}
+{% load ifsetting_tag %}
+{% load bootstrap_tags %}
+{% load pagination_tags %}
+
+{% block head_title %}{% trans "Welcome" %}{% endblock %}
+
+{% block body_class %}home{% endblock %}
+
+{% block body %}
+    <h1>{{object_list.model.options.verbose_name_plural|capfirst}}</h1>
+    <p>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td><a href="{{object.get_absolute_url}}">{{object}}</a></td>
+                    <td width="20%">
+                        <a class="btn btn-info" href="{{object.get_update_url}}">Edit</a>
+                        <a class="btn btn-warning" href="{{object.get_delete_url}}">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+
+            {% endfor %}
+        </tbody>
+    </table>
+    {% paginate 2 %}
+    </p>
+
+    <div class="form-actions">
+        <a class="btn btn-primary" href="{{object_list.model.get_create_url}}">
+            Create a new {{object_list.model.options.verbose_name}} 
+        </a>
+    </div>
+
+{% endblock %}

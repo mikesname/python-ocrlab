@@ -1,0 +1,24 @@
+{% extends "theme_base.html" %}
+
+{% load i18n %}
+{% load ifsetting_tag %}
+{% load bootstrap_tags %}
+
+{% block head_title %}{% trans "Create new" %}{% endblock %}
+
+{% block body_class %}{{object.options.verbose_name}}{% endblock %}
+
+{% block body %}
+    <h1>Create new {{object.options.verbose_name}}</h1>
+
+    <div class="well">
+        <form action="{{object.get_create_url}}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form|as_bootstrap}}           
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

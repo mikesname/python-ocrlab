@@ -1,0 +1,182 @@
+{
+    "__meta": {
+        "name": "SwitchTest",
+        "description": "Testing Switch functionality",
+        "tags": "switch test"
+    },
+	"filein1": {
+		"type": "ocropus.GrayFileIn",
+		"stage": "input",
+		"inputs": [],
+		"params": [
+			[
+				"path",
+				"etc/simple.png"
+			]
+		],
+		"__meta": {
+			"x": 98,
+			"y": 2,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"DeskewPageByRAST1": {
+		"type": "ocropus.DeskewPageByRAST",
+		"stage": "filter_binary",
+		"inputs": [
+			"BinarizeBySauvola1"
+		],
+		"params": [
+			[
+				"max_n",
+				10000
+			]
+		],
+		"__meta": {
+			"x": 98,
+			"y": 178,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"RmHalftone1": {
+		"type": "ocropus.RmHalftone",
+		"stage": "filter_binary",
+		"inputs": [
+			"DeskewPageByRAST1"
+		],
+		"params": [
+			[
+				"factor",
+				3
+			],
+			[
+				"threshold",
+				4
+			],
+			[
+				"max_n",
+				"20000"
+			]
+		],
+		"__meta": {
+			"x": 98,
+			"y": 266,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"BinarizeBySauvola1": {
+		"type": "ocropus.BinarizeBySauvola",
+		"stage": "binarize",
+		"inputs": [
+			"filein1"
+		],
+		"params": [
+			[
+				"k",
+				0.3
+			],
+			[
+				"w",
+				40
+			]
+		],
+		"__meta": {
+			"x": 98,
+			"y": 90,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"TesseractRecognizer1": {
+		"type": "tesseract.TesseractRecognizer",
+		"stage": "recognize",
+		"inputs": [
+			"RmHalftone1",
+			"Switch1"
+		],
+		"params": [
+			[
+				"language_model",
+				"Tesseract Default Lang"
+			]
+		],
+		"__meta": {
+			"x": 28,
+			"y": 526,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"SegmentPageByXYCUTS1": {
+		"type": "ocropus.SegmentPageByXYCUTS",
+		"stage": "page_segment",
+		"inputs": [
+			"RmHalftone1"
+		],
+		"params": [],
+		"__meta": {
+			"x": 145,
+			"y": 372,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"SegmentPageByRAST1": {
+		"type": "ocropus.SegmentPageByRAST",
+		"stage": "page_segment",
+		"inputs": [
+			"RmHalftone1"
+		],
+		"params": [
+			[
+				"all_pixels",
+				"0"
+			],
+			[
+				"gap_factor",
+				"10"
+			],
+			[
+				"max_results",
+				"1000"
+			],
+			[
+				"use_four_line_model",
+				"0"
+			],
+			[
+				"max_descender",
+				"20"
+			]
+		],
+		"__meta": {
+			"x": 310,
+			"y": 373,
+			"focussed": false,
+			"viewing": true
+		}
+	},
+	"Switch1": {
+		"type": "util.Switch",
+		"stage": "utils",
+		"inputs": [
+			"SegmentPageByXYCUTS1",
+			"SegmentPageByRAST1"
+		],
+		"params": [
+			[
+				"input",
+				1
+			]
+		],
+		"__meta": {
+			"x": 113,
+			"y": 435,
+			"focussed": true,
+			"viewing": false
+		}
+	}
+}

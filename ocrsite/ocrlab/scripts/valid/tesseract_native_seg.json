@@ -1,0 +1,97 @@
+{
+  "__meta": {
+      "name": "TesseractPageSeg",
+      "description": "Tesseract script, page segmentation",
+      "tags": "tesseract recognize" 
+  },
+  "GrayFileIn1": {
+    "type": "ocropus.GrayFileIn",
+    "stage": "input",
+    "inputs": [],
+    "params": [
+      [
+        "path",
+        "etc/simple.png"
+      ]
+    ],
+    "__meta": {
+      "x": 119,
+      "y": -65,
+      "focussed": false,
+      "viewing": false
+    }
+  },
+  "DeskewPageByRAST1": {
+    "type": "ocropus.DeskewPageByRAST",
+    "stage": "filter_binary",
+    "inputs": [
+      "GrayFileIn1"
+    ],
+    "params": [
+      [
+        "max_n",
+        "10000"
+      ]
+    ],
+    "__meta": {
+      "x": 119,
+      "y": 23,
+      "focussed": false,
+      "viewing": false
+    }
+  },
+  "RmBig1": {
+    "type": "ocropus.RmBig",
+    "stage": "filter_binary",
+    "inputs": [
+      "DeskewPageByRAST1"
+    ],
+    "params": [
+      [
+        "mh",
+        "100"
+      ],
+      [
+        "mw",
+        "300"
+      ],
+      [
+        "minaspect",
+        "0.03"
+      ],
+      [
+        "maxaspect",
+        "30"
+      ],
+      [
+        "max_n",
+        "50000"
+      ]
+    ],
+    "__meta": {
+      "x": 119,
+      "y": 111,
+      "focussed": false,
+      "viewing": false
+    }
+  },
+  "TesseractPageSeg1": {
+    "type": "tesseract.TesseractPageSeg",
+    "stage": "recognize",
+    "inputs": [
+      "RmBig1"
+    ],
+    "params": [
+      [
+        "language_model",
+        "Tesseract Default Lang"
+      ]
+    ],
+    "__meta": {
+      "x": 119,
+      "y": 199,
+      "focussed": true,
+      "viewing": true
+    }
+  }
+}

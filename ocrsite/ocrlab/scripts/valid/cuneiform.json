@@ -1,0 +1,68 @@
+{
+    "__meta": {
+        "name": "CuneiformBasic",
+        "description": "Basic Cuneiform script",
+        "tags": "basic cuneiform recognize" 
+    },
+    "filein1": {
+        "type": "ocropus.GrayFileIn", 
+        "params": [
+            [
+                "path", 
+                "etc/simple.png"
+            ]
+        ], 
+        "inputs": []
+    }, 
+    "DeskewPageByRAST1": {
+        "type": "ocropus.DeskewPageByRAST", 
+        "params": [
+            [
+                "max_n", 
+                10000
+            ]
+        ], 
+        "inputs": [
+            "BinarizeBySauvola1"
+        ]
+    }, 
+    "RmHalftone1": {
+        "type": "ocropus.RmHalftone", 
+        "params": [
+            [
+                "factor", 
+                3
+            ], 
+            [
+                "threshold", 
+                4
+            ]
+        ], 
+        "inputs": [
+            "DeskewPageByRAST1"
+        ]
+    }, 
+    "BinarizeBySauvola1": {
+        "type": "ocropus.BinarizeBySauvola", 
+        "params": [
+            [
+                "k", 
+                0.29999999999999999
+            ], 
+            [
+                "w", 
+                40
+            ]
+        ], 
+        "inputs": [
+            "filein1"
+        ]
+    }, 
+    "CuneiformRecognizer1": {
+        "params": [], 
+        "type": "cuneiform.CuneiformRecognizer", 
+        "inputs": [
+            "RmHalftone1"
+        ]
+    }
+}

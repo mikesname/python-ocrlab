@@ -1,0 +1,233 @@
+{
+	"__meta": {
+		"name": "Evaluation Test",
+		"description": "Test evaluation with ISRI accuracy",
+		"tags": "evaluation test"
+	},
+	"filein1": {
+		"type": "ocropus.GrayFileIn",
+		"stage": "input",
+		"inputs": [],
+		"params": [
+			[
+				"path",
+				"etc/simple.png"
+			]
+		],
+		"__meta": {
+			"x": 309,
+			"y": -143,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"DeskewPageByRAST1": {
+		"type": "ocropus.DeskewPageByRAST",
+		"stage": "filter_binary",
+		"inputs": [
+			"BinarizeBySauvola1"
+		],
+		"params": [
+			[
+				"max_n",
+				10000
+			]
+		],
+		"__meta": {
+			"x": 309,
+			"y": 33,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"RmHalftone1": {
+		"type": "ocropus.RmHalftone",
+		"stage": "filter_binary",
+		"inputs": [
+			"DeskewPageByRAST1"
+		],
+		"params": [
+			[
+				"factor",
+				3
+			],
+			[
+				"threshold",
+				4
+			],
+			[
+				"max_n",
+				"20000"
+			]
+		],
+		"__meta": {
+			"x": 309,
+			"y": 121,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"BinarizeBySauvola1": {
+		"type": "ocropus.BinarizeBySauvola",
+		"stage": "binarize",
+		"inputs": [
+			"filein1"
+		],
+		"params": [
+			[
+				"k",
+				0.3
+			],
+			[
+				"w",
+				40
+			]
+		],
+		"__meta": {
+			"x": 309,
+			"y": -55,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"TesseractRecognizer1": {
+		"type": "tesseract.TesseractRecognizer",
+		"stage": "recognize",
+		"inputs": [
+			"RmHalftone1",
+			"Switch1"
+		],
+		"params": [
+			[
+				"language_model",
+				"Tesseract Default Lang"
+			]
+		],
+		"__meta": {
+			"x": 315,
+			"y": 323,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"HocrToText1": {
+		"type": "util.HocrToText",
+		"stage": "utils",
+		"inputs": [
+			"TesseractRecognizer1"
+		],
+		"params": [],
+		"__meta": {
+			"x": 242,
+			"y": 410,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"TextFileIn1": {
+		"type": "util.TextFileIn",
+		"stage": "input",
+		"inputs": [],
+		"params": [
+			[
+				"path",
+				"etc/simple.gt.txt"
+			]
+		],
+		"__meta": {
+			"x": 473,
+			"y": 383,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"TextEvaluation1": {
+		"type": "util.TextEvaluation",
+		"stage": "utils",
+		"inputs": [
+			"HocrToText1",
+			"TextFileIn1"
+		],
+		"params": [
+            [
+                "method",
+                "character"
+            ]
+        ],
+		"__meta": {
+			"x": 323,
+			"y": 503,
+			"focussed": false,
+			"viewing": true
+		}
+	},
+	"SegmentPageByRAST1": {
+		"type": "ocropus.SegmentPageByRAST",
+		"stage": "page_segment",
+		"inputs": [
+			"RmHalftone1"
+		],
+		"params": [
+			[
+				"all_pixels",
+				"0"
+			],
+			[
+				"gap_factor",
+				"10"
+			],
+			[
+				"max_results",
+				"1000"
+			],
+			[
+				"use_four_line_model",
+				"0"
+			],
+			[
+				"max_descender",
+				"20"
+			]
+		],
+		"__meta": {
+			"x": 385,
+			"y": 192,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"Switch1": {
+		"type": "util.Switch",
+		"stage": "utils",
+		"inputs": [
+			"SegmentPageByRAST1",
+			"SegmentPageByXYCUTS1"
+		],
+		"params": [
+			[
+				"input",
+				1
+			]
+		],
+		"__meta": {
+			"x": 508,
+			"y": 271,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"SegmentPageByXYCUTS1": {
+		"type": "ocropus.SegmentPageByXYCUTS",
+		"stage": "page_segment",
+		"inputs": [
+			"RmHalftone1"
+		],
+		"params": [],
+		"__meta": {
+			"x": 546,
+			"y": 206,
+			"focussed": false,
+			"viewing": false
+		}
+	}
+}

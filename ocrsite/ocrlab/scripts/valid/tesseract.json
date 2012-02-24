@@ -1,0 +1,81 @@
+{
+    "__meta": {
+        "name": "TesseractBasic",
+        "description": "Basic Tesseract script",
+        "tags": "basic tesseract recognize" 
+    },
+    "filein1": {
+        "params": [
+            [
+                "path", 
+                "etc/simple.png"
+            ]
+        ], 
+        "type": "ocropus.GrayFileIn", 
+        "inputs": []
+    }, 
+    "DeskewPageByRAST1": {
+        "params": [
+            [
+                "max_n", 
+                10000
+            ]
+        ], 
+        "type": "ocropus.DeskewPageByRAST", 
+        "inputs": [
+            "BinarizeBySauvola1"
+        ]
+    }, 
+    "RmHalftone1": {
+        "params": [
+            [
+                "factor", 
+                3
+            ], 
+            [
+                "threshold", 
+                4
+            ]
+        ], 
+        "type": "ocropus.RmHalftone", 
+        "inputs": [
+            "DeskewPageByRAST1"
+        ]
+    }, 
+    "BinarizeBySauvola1": {
+        "params": [
+            [
+                "k", 
+                0.29999999999999999
+            ], 
+            [
+                "w", 
+                40
+            ]
+        ], 
+        "type": "ocropus.BinarizeBySauvola", 
+        "inputs": [
+            "filein1"
+        ]
+    }, 
+    "SegmentPageBy1CP1": {
+        "params": [], 
+        "type": "ocropus.SegmentPageBy1CP", 
+        "inputs": [
+            "RmHalftone1"
+        ]
+    }, 
+    "TesseractRecognizer1": {
+        "params": [
+            [
+                "language_model", 
+                "Tesseract Default Lang"
+            ]
+        ], 
+        "type": "tesseract.TesseractRecognizer", 
+        "inputs": [
+            "RmHalftone1", 
+            "SegmentPageBy1CP1"
+        ]
+    }
+}

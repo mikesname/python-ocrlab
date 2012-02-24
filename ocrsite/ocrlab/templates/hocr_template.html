@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html 
+     PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN'
+    'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <meta name='ocr-id' value='{{ocrid}}'>
+    <meta name='ocr-recognized' value='lines text'>
+    <meta name='DC.creator' value='{{dc_creator}}'>
+    <meta name='DC.title' value='{{dc_title}}'>
+    <meta name='DC.publisher' value='{{dc_publisher}}'>
+</head>
+<body>
+    <div class='ocr_page' id='page_1' title='file {{file}}; bbox {{bbox.0}} {{bbox.1}} {{bbox.2}} {{bbox.3}}'>
+        {% for line in lines %}<span class='ocr_line' id='line_{{line.index}}' title='bbox {{line.bbox.0}} {{line.bbox.1}} {{line.bbox.2}} {{line.bbox.3}}'>{{line.text}}<br></span>
+        {% endfor %}
+    </div>
+</body>
+</html>

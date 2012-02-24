@@ -1,0 +1,24 @@
+{% extends "theme_base.html" %}
+
+{% load i18n %}
+{% load ifsetting_tag %}
+{% load bootstrap_tags %}
+
+{% block head_title %}{% trans "Welcome" %}{% endblock %}
+
+{% block body_class %}home{% endblock %}
+
+{% block body %}
+    <h1>Let's OCR some stuff</h1>
+
+    <div class="well">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form|as_bootstrap}}           
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

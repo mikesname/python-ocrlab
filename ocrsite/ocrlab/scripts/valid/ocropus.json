@@ -1,0 +1,94 @@
+{
+    "__meta": {
+        "name": "OcropusBasic",
+        "description": "Basic Ocropus script",
+        "tags": "basic ocropus recognize" 
+    },
+    "filein1": {
+        "params": [
+            [
+                "path", 
+                "etc/simple.png"
+            ]
+        ], 
+        "type": "ocropus.GrayFileIn", 
+        "inputs": []
+    }, 
+    "DeskewPageByRAST1": {
+        "params": [
+            [
+                "max_n", 
+                10000
+            ]
+        ], 
+        "type": "ocropus.DeskewPageByRAST", 
+        "inputs": [
+            "BinarizeBySauvola1"
+        ]
+    }, 
+    "RmHalftone1": {
+        "params": [
+            [
+                "factor", 
+                3
+            ], 
+            [
+                "threshold", 
+                4
+            ]
+        ], 
+        "type": "ocropus.RmHalftone", 
+        "inputs": [
+            "DeskewPageByRAST1"
+        ]
+    }, 
+    "BinarizeBySauvola1": {
+        "params": [
+            [
+                "k", 
+                0.29999999999999999
+            ], 
+            [
+                "w", 
+                40
+            ]
+        ], 
+        "type": "ocropus.BinarizeBySauvola", 
+        "inputs": [
+            "filein1"
+        ]
+    }, 
+    "SegmentPageByRAST1": {
+        "params": [
+            [
+                "all_pixels", 
+                0
+            ], 
+            [
+                "gap_factor", 
+                10
+            ]
+        ], 
+        "type": "ocropus.SegmentPageByRAST", 
+        "inputs": [
+            "RmHalftone1"
+        ]
+    }, 
+    "OcropusRecognizer1": {
+        "params": [
+            [
+                "character_model", 
+                "Ocropus Default Char"
+            ], 
+            [
+                "language_model", 
+                "Ocropus Default Lang"
+            ]
+        ], 
+        "type": "ocropus.OcropusRecognizer", 
+        "inputs": [
+            "RmHalftone1", 
+            "SegmentPageByRAST1"
+        ]
+    }
+}

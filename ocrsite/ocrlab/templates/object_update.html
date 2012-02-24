@@ -1,0 +1,24 @@
+{% extends "theme_base.html" %}
+
+{% load i18n %}
+{% load ifsetting_tag %}
+{% load bootstrap_tags %}
+
+{% block head_title %}{% trans "Update" %} {{object}}{% endblock %}
+
+{% block body_class %}{{form.instance.options.verbose_name}}{% endblock %}
+
+{% block body %}
+    <h1>{% trans "Update" %} {{object}}</h1>
+
+    <div class="well">
+        <form action="{{form.instance.get_update_url}}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form|as_bootstrap}}           
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

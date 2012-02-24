@@ -1,0 +1,101 @@
+{
+	"__meta": {
+		"name": "SegmentTest",
+		"description": "Testing segmentation",
+		"tags": "ocropus segmentation test"
+	},
+	"FileIn1": {
+		"type": "ocropus.GrayFileIn",
+		"stage": "input",
+		"inputs": [],
+		"params": [
+			[
+				"path",
+				"etc/simple.png"
+			]
+		],
+		"__meta": {
+			"x": 123,
+			"y": 306,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"DeskewPageByRAST1": {
+		"type": "ocropus.DeskewPageByRAST",
+		"stage": "filter_binary",
+		"inputs": [
+			"FileIn1"
+		],
+		"params": [
+			[
+				"max_n",
+				"10000"
+			]
+		],
+		"__meta": {
+			"x": 123,
+			"y": 394,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"BinarizeBySauvola1": {
+		"type": "ocropus.BinarizeBySauvola",
+		"stage": "binarize",
+		"inputs": [
+			"DeskewPageByRAST1"
+		],
+		"params": [
+			[
+				"k",
+				"0.3"
+			],
+			[
+				"w",
+				"40"
+			]
+		],
+		"__meta": {
+			"x": 123,
+			"y": 482,
+			"focussed": false,
+			"viewing": false
+		}
+	},
+	"SegmentPageByRAST1": {
+		"type": "ocropus.SegmentPageByRAST",
+		"stage": "page_segment",
+		"inputs": [
+			"BinarizeBySauvola1"
+		],
+		"params": [
+			[
+				"all_pixels",
+				"0"
+			],
+			[
+				"gap_factor",
+				"10"
+			],
+			[
+				"max_results",
+				"1000"
+			],
+			[
+				"use_four_line_model",
+				"0"
+			],
+			[
+				"max_descender",
+				"20"
+			]
+		],
+		"__meta": {
+			"x": 123,
+			"y": 570,
+			"focussed": true,
+			"viewing": false
+		}
+	}
+}
