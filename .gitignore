@@ -1,0 +1,6 @@
+*.swo
+*.swa
+*.swp
+*.pyc
+*/dev.db
+site_media
