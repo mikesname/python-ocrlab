@@ -11,3 +11,4 @@ south
 MySQL-python
 django-autoslug
 django-taggit
+django-piston
