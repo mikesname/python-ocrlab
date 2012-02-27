@@ -13,6 +13,7 @@ __all__ = ["HelperFileApp", "HelperFileType", "HelperFile"]
 class HelperFileApp(BaseModel, NameSlugModel):
     """App which has helper files."""
     class Meta:
+        app_label = "ocrlab"
         verbose_name = "helperfileapp"
     description = models.TextField(blank=True)
 
@@ -20,6 +21,7 @@ class HelperFileApp(BaseModel, NameSlugModel):
 class HelperFileType(BaseModel, NameSlugModel):
     """Type of file helper."""
     class Meta:
+        app_label = "ocrlab"
         verbose_name = "helperfiletype"
     description = models.TextField(blank=True)
 
@@ -27,6 +29,7 @@ class HelperFileType(BaseModel, NameSlugModel):
 class HelperFile(BaseModel, NameSlugModel, DateTimeModel):
     """File which can be referenced by an OCR node."""
     class Meta:
+        app_label = "ocrlab"
         verbose_name = "helperfile"
     description = models.TextField(blank=True)
     file = models.FileField(upload_to="models")

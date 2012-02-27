@@ -12,11 +12,10 @@ from nodetree import node, writable_node, exceptions
 from nodetree import utils as nodeutils
 
 import ocrolib
-from ocradmin.ocrmodels.models import OcrModel
+#from ocradmin.ocrmodels.models import OcrModel
 
 from . import base
 from .. import stages, utils
-
 
 class UnknownOcropusNodeType(Exception):
     pass
@@ -261,37 +260,29 @@ class OcropusBinaryFilterBase(OcropusBase, base.BinaryPngWriterMixin):
 
 
 class OcropusRecognizer(base.LineRecognizerNode):
-    """
-    Ocropus Native text recogniser.
-    """
+    """Ocropus Native text recogniser."""
 
     @nodeutils.ClassProperty
     @classmethod
     def parameters(cls):
+        chars = cls.get_helper_files("char")
+        if not chars:
+            raise OcropusNodeError("No character models available", None)
+        langs = cls.get_helper_files("lang")
+        if not langs:
+            raise OcropusNodeError("No language models available", None)
         return [
-            dict(
-                name="character_model",
-                value="Ocropus Default Char",
-                choices=[m.name for m in \
-                        OcrModel.objects.filter(app="ocropus", type="char")],
-            ), dict(
-                name="language_model",
-                value="Ocropus Default Lang",
-                choices=[m.name for m in \
-                        OcrModel.objects.filter(app="ocropus", type="lang")],
-            )
+            dict(name="character_model", value=chars[0], choices=chars), 
+            dict(name="language_model",  value=langs[0], choices=langs)
         ]
 
     def validate(self):
-        """
-        Check we're in a good state.
-        """
+        """Check we're in a good state."""
         super(OcropusRecognizer, self).validate()
         if self._params.get("character_model", "").strip() == "":
             raise exceptions.ValidationError("no character model given.", self)
         if self._params.get("language_model", "").strip() == "":
             raise exceptions.ValidationError("no language model given: %s" % self._params, self)
-
 
     def init_converter(self):
         """
@@ -299,13 +290,15 @@ class OcropusRecognizer(base.LineRecognizerNode):
         """
         try:
             self._linerec = ocrolib.RecognizeLine()
-            cmodpath = utils.lookup_model_file(self._params["character_model"])
+            cmodpath = os.path.join(self.get_helper_dir("char"), 
+                    self._params["character_model"])
             self.logger.debug("Loading char mod file: %s" % cmodpath)
-            self._linerec.load_native(cmodpath)
+            self._linerec.load_native(cmodpath.encode())
             self._lmodel = ocrolib.OcroFST()
-            lmodpath = utils.lookup_model_file(self._params["language_model"])
+            lmodpath = os.path.join(self.get_helper_dir("lang"), 
+                    self._params["language_model"])
             self.logger.debug("Loading lang mod file: %s" % lmodpath)
-            self._lmodel.load(lmodpath)
+            self._lmodel.load(lmodpath.encode())
         except (StandardError, RuntimeError):
             raise
 

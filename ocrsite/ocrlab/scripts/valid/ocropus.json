@@ -78,11 +78,11 @@
         "params": [
             [
                 "character_model", 
-                "Ocropus Default Char"
+                "ocropus_default_char.model"
             ], 
             [
                 "language_model", 
-                "Ocropus Default Lang"
+                "ocropus_default_lang.fst"
             ]
         ], 
         "type": "ocropus.OcropusRecognizer", 

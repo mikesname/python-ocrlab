@@ -15,7 +15,7 @@ from nodetree import node, exceptions, utils as nodeutils
 from . import base
 from .. import stages, utils, exceptions
 
-from ocradmin.ocrmodels.models import OcrModel
+#from ocradmin.ocrmodels.models import OcrModel
 
 from ocrolib import numpy
 
@@ -30,13 +30,11 @@ class TesseractRecognizer(base.CommandLineRecognizerNode):
     @nodeutils.ClassProperty
     @classmethod
     def parameters(cls):
+        langs = cls.get_helper_files("lang")
+        if not langs:
+            raise exceptions.NodeError("No language models available", None)
         return [
-            dict(
-                name="language_model",
-                value="Tesseract Default Lang",
-                choices=[m.name for m in \
-                        OcrModel.objects.filter(app="tesseract", type="lang")],
-            )
+            dict(name="language_model", value=langs[0], choices=langs)
         ]
 
     def validate(self):
@@ -53,7 +51,8 @@ class TesseractRecognizer(base.CommandLineRecognizerNode):
         cleaned up in the destructor.
         """
         if not hasattr(self, "_tessdata") is None:
-            modpath = utils.lookup_model_file(self._params["language_model"])
+            modpath = os.path.join(self.get_helper_dir("lang"), 
+                    self._params["language_model"])
             self.unpack_tessdata(modpath)
         self._tesseract = utils.get_binary("tesseract")
         self.logger.debug("Using Tesseract: %s" % self._tesseract)

@@ -7,7 +7,7 @@ from contextlib import contextmanager
 
 from nodetree import cache
 
-from .. import deepzoom
+import deepzoom
 import hashlib
 import bencode
 

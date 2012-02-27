@@ -8,6 +8,7 @@ import os
 import codecs
 import json
 import subprocess as sp
+import inspect
 
 from nodetree import node, writable_node, exceptions
 import ocrolib
@@ -83,7 +84,24 @@ class GrayPngWriterMixin(BinaryPngWriterMixin):
     abstract = True
 
 
-class LineRecognizerNode(node.Node, TextWriterMixin):
+class RecognizerNode(node.Node):
+    """Base class for recognizer nodes."""
+    @classmethod
+    def get_helper_dir(cls, category):
+        """Get the directory containing helper files."""
+        dirname = os.path.splitext(inspect.getfile(cls))[0]
+        return os.path.abspath(os.path.join(dirname, category))
+
+    @classmethod
+    def get_helper_files(cls, category):
+        """Get a list of character model files."""
+        dirpath = cls.get_helper_dir(category)
+        if not os.path.exists(dirpath):
+            return []
+        return [f for f in os.listdir(dirpath) if not f.startswith(".")]
+
+
+class LineRecognizerNode(RecognizerNode, TextWriterMixin):
     """
     Node which takes a binary and a segmentation and
     recognises text one line at a time.
@@ -135,7 +153,7 @@ class LineRecognizerNode(node.Node, TextWriterMixin):
         return utils.hocr_from_data(out)
 
 
-class ColumnRecognizerNode(node.Node, TextWriterMixin):
+class ColumnRecognizerNode(RecognizerNode, TextWriterMixin):
     """
     Node which takes a binary and a segmentation and
     recognises each column separately.
