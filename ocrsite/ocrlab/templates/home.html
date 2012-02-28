@@ -12,7 +12,7 @@
     <h1>Let's OCR some stuff</h1>
 
     <div class="well">
-        <form method="post" enctype="multipart/form-data" target="_blank">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{form|as_bootstrap}}           
             <div class="form-actions">
