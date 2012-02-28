@@ -61,7 +61,7 @@
         "params": [
             [
                 "language_model", 
-                "Tesseract Default Lang"
+                "tesseract_default_lang.tgz"
             ]
         ], 
         "type": "tesseract.TesseractRecognizer", 
