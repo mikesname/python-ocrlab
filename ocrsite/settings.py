@@ -132,9 +132,6 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "pinax.core.context_processors.pinax_settings",
     
     "pinax.apps.account.context_processors.account",
-    
-    "notification.context_processors.notification",
-    "announcements.context_processors.site_wide_announcements",
 ]
 
 INSTALLED_APPS = [
@@ -153,7 +150,6 @@ INSTALLED_APPS = [
     "pinax_theme_bootstrap",
     
     # external
-    "notification", # must be first
     "staticfiles",
     "compressor",
     "debug_toolbar",
@@ -161,7 +157,6 @@ INSTALLED_APPS = [
     "django_openid",
     "timezones",
     "emailconfirmation",
-    "announcements",
     "pagination",
     "idios",
     "metron",
