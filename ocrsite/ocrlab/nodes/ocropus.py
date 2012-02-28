@@ -1,8 +1,4 @@
-"""
-Ocropus OCR processing nodes.
-"""
-
-from __future__ import absolute_import
+"""Ocropus OCR processing nodes."""
 
 import os
 import sys
@@ -12,7 +8,6 @@ from nodetree import node, writable_node, exceptions
 from nodetree import utils as nodeutils
 
 import ocrolib
-#from ocradmin.ocrmodels.models import OcrModel
 
 from . import base
 from .. import stages, utils
@@ -28,6 +23,8 @@ class OcropusNodeError(exceptions.NodeError):
 
 
 def makesafe(val):
+    """The Ocropus libs don't like unicode, so ensure we
+    use standard strings."""
     if isinstance(val, unicode):
         return val.encode()
     return val
@@ -44,6 +41,7 @@ class GrayFileIn(base.ImageGeneratorNode,
     parameters = [dict(name="path", value="", type="filepath")]
 
     def process(self):
+        # TODO: Ensure we can also read a filehandle
         if not os.path.exists(self._params.get("path", "")):
             return self.null_data()
         return ocrolib.read_image_gray(makesafe(self._params.get("path")))

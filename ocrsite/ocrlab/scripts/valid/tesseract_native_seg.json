@@ -5,7 +5,7 @@
       "tags": "tesseract recognize" 
   },
   "GrayFileIn1": {
-    "type": "ocropus.GrayFileIn",
+    "type": "pil.RGBFileIn",
     "stage": "input",
     "inputs": [],
     "params": [

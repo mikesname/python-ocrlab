@@ -13,38 +13,24 @@ from . import base
 from .. import stages
 
 
-def image2array(im):
-    if im.mode not in ("L", "F"):
-        raise ValueError, "can only convert single-layer images"
-    if im.mode == "L":
-        a = numpy.fromstring(im.tostring(), numpy.uint8)
-    else:
-        a = numpy.fromstring(im.tostring(), numpy.float32)
-    a.shape = im.size[1], im.size[0]
-    return a
-
-def array2image(a):
-    if a.dtype == numpy.uint8:
-        mode = "L"
-    elif a.dtype == numpy.float32:
-        mode = "F"
-    else:
-        raise ValueError, "unsupported image mode"
-    return Image.fromstring(mode, (a.shape[1], a.shape[0]), a.tostring())
-
-
 class RGBFileIn(base.ImageGeneratorNode, base.BinaryPngWriterMixin):
     """Read a file with PIL."""
     stage = stages.INPUT
     intypes = []
     outtype = numpy.ndarray
-    parameters = [dict(name="path", value="", type="filepath")]
+    parameters = [
+            dict(name="path", value="", type="filepath"),
+            dict(name="convert_to_gray", value=True, type="bool")
+    ]
 
     def process(self):
         path = self._params.get("path")
-        if not os.path.exists(path):
+        if isinstance(path, basestring) and not os.path.exists(path):
             return self.null_data()
-        return numpy.asarray(Image.open(path))
+        pil = Image.open(path)
+        if self._params.get("convert_to_gray", True):
+            pil = pil.convert("L")
+        return numpy.asarray(pil)
 
     @classmethod
     def reader(cls, handle):

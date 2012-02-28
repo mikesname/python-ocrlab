@@ -313,7 +313,8 @@ class FileNode(node.Node):
         super(FileNode, self).validate()
         if self._params.get("path") is None:
             raise exceptions.ValidationError("'path' not set", self)
-        if not os.path.exists(self._params.get("path", "")):
+        path = self._params.get("path", "")
+        if isinstance(path, basestring) and not os.path.exists(path):
             raise exceptions.ValidationError("'path': file not found", self)
 
 
