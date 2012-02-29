@@ -22,6 +22,7 @@ MAX_UPLOAD_SIZE = "20971520"
 
 class SimpleOcrForm(forms.Form):
     file = forms.FileField()
+    async = forms.BooleanField(required=False)
     preset = forms.ModelChoiceField(queryset=Preset.objects.all())
 
     def clean_file(self):    

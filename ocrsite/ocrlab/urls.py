@@ -20,6 +20,8 @@ PAGINATE_BY = 10
 
 urlpatterns = patterns('',
     url(r'^$', views.home, name="home"),
+    url(r'^progress/(?P<task_id>[a-z0-9-]+)/?$',
+            views.progress, name='ocr_progress'),
 
     url(r'^presets/?$', ListView.as_view(
             model=models.Preset,

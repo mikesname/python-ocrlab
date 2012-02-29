@@ -1,0 +1,16 @@
+<div id="import-progress" data-state="{{async.state}}" class="progress progress-info progress-striped">
+    <div class="bar" style="width: {% if progress %}{{progress}}%{% endif %};"></div>
+</div>
+{% if async.failed %}
+    <div class="alert alert-error">
+        <strong>Uh oh, there was an error</strong>
+        
+    </div>    
+{% else %}
+    {% if async.successful %}
+        <div class="alert alert-success">
+            <strong>OCR Completed.</strong>
+        </div>
+    {% endif %}
+{% endif %}
+

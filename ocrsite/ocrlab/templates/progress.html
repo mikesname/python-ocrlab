@@ -1,0 +1,28 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block body_class %}ocr{% endblock %}
+
+{% block body %}
+
+    <h1>Running OCR</h1>
+    <p>
+        <div id="import-info">
+            {% include "_progress.html" %}
+        </div>
+    </p>
+    <script type="application/javascript">
+        var timer = -1;
+        $(function() {
+            timer = setInterval(function() {
+                $("#import-info").load(window.location.href, function() {
+                    if ($.inArray($("#import-progress").data("state"), [
+                            "PENDING", "PROGRESS"]) == -1) {
+                        clearInterval(timer);
+                    }
+                });
+            }, 200);
+        });
+    </script>
+{% endblock %}

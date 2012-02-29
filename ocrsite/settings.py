@@ -182,8 +182,12 @@ INSTALLED_APPS = [
     # migrations
     "south",
 
+    # celery
+    "djcelery",
+
     # custom
     "ocrlab",
+
 ]
 
 FIXTURE_DIRS = [
