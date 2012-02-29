@@ -21,9 +21,7 @@ class ExternalToolError(StandardError):
     pass
 
 class TextWriterMixin(writable_node.WritableNodeMixin):
-    """
-    Write text data.
-    """
+    """Write text data."""
     extension = ".txt"
 
     @classmethod
@@ -40,9 +38,7 @@ class TextWriterMixin(writable_node.WritableNodeMixin):
 
 
 class JSONWriterMixin(writable_node.WritableNodeMixin):
-    """
-    Functions for reading and writing a node's data in JSON format.
-    """
+    """Functions for reading and writing a node's data in JSON format."""
     extension = ".json"
 
     @classmethod
@@ -57,16 +53,12 @@ class JSONWriterMixin(writable_node.WritableNodeMixin):
 
 
 class PngWriterMixin(writable_node.WritableNodeMixin):
-    """
-    Object which writes/reads a PNG.
-    """
+    """Object which writes/reads a PNG."""
     extension = ".png"
 
 
 class BinaryPngWriterMixin(PngWriterMixin):
-    """
-    Functions for reading and writing a node's data in binary PNG.
-    """
+    """Functions for reading and writing a node's data in binary PNG."""
     @classmethod
     def reader(cls, handle):
         return ocrolib.numpy.asarray(Image.open(handle))
@@ -78,9 +70,7 @@ class BinaryPngWriterMixin(PngWriterMixin):
 
 
 class GrayPngWriterMixin(BinaryPngWriterMixin):
-    """
-    Functions for reading and writing a node's data in binary PNG.
-    """
+    """Functions for reading and writing a node's data in binary PNG."""
     abstract = True
 
 
@@ -102,10 +92,8 @@ class RecognizerNode(node.Node):
 
 
 class LineRecognizerNode(RecognizerNode, TextWriterMixin):
-    """
-    Node which takes a binary and a segmentation and
-    recognises text one line at a time.
-    """
+    """Node which takes a binary and a segmentation and
+    recognises text one line at a time."""
     stage = stages.RECOGNIZE
     intypes = [ocrolib.numpy.ndarray, dict]
     outtype = types.HocrString
@@ -124,8 +112,7 @@ class LineRecognizerNode(RecognizerNode, TextWriterMixin):
         pass
 
     def process(self, binary, boxes):
-        """
-        Recognize page text.
+        """Recognize page text.
 
         input: tuple of binary, input boxes
         return: page data
@@ -154,10 +141,8 @@ class LineRecognizerNode(RecognizerNode, TextWriterMixin):
 
 
 class ColumnRecognizerNode(RecognizerNode, TextWriterMixin):
-    """
-    Node which takes a binary and a segmentation and
-    recognises each column separately.
-    """
+    """Node which takes a binary and a segmentation and
+    recognises each column separately."""
     stage = stages.RECOGNIZE
     intypes = [ocrolib.numpy.ndarray, dict]
     outtype = types.HocrString
@@ -176,8 +161,7 @@ class ColumnRecognizerNode(RecognizerNode, TextWriterMixin):
         pass
 
     def process(self, binary, boxes):
-        """
-        Recognize page text.
+        """Recognize page text.
 
         input: tuple of binary, input boxes
         return: page data
@@ -202,11 +186,9 @@ class ColumnRecognizerNode(RecognizerNode, TextWriterMixin):
 
 
 def set_progress(logger, progress_func, step, end, granularity=5):
-    """
-    Call a progress function, if supplied.  Only call
+    """Call a progress function, if supplied.  Only call
     every 5 steps.  Also set the total todo, i.e. the
-    number of lines to process.
-    """
+    number of lines to process."""
     if progress_func is None:
         return
     if not (step and end):
@@ -218,9 +200,7 @@ def set_progress(logger, progress_func, step, end, granularity=5):
 
 
 class CommandLineRecognizerNode(LineRecognizerNode):
-    """
-    Generic recogniser based on a command line tool.
-    """
+    """Generic recogniser based on a command line tool."""
     binary = "unimplemented"
     abstract = True
 
@@ -228,31 +208,23 @@ class CommandLineRecognizerNode(LineRecognizerNode):
         super(CommandLineRecognizerNode, self).validate()
 
     def get_command(self, *args, **kwargs):
-        """
-        Get the command line for converting a given image.
-        """
+        """Get the command line for converting a given image."""
         raise NotImplementedError
 
     @classmethod
     def write_binary(cls, path, data):
-        """
-        Write a binary image.
-        """
+        """Write a binary image."""
         ocrolib.iulib.write_image_binary(path.encode(), ocrolib.numpy2narray(data))
 
     @classmethod
     def write_packed(cls, path, data):
-        """
-        Write a packed image.
-        """
+        """Write a packed image."""
         ocrolib.iulib.write_image_packed(path.encode(), ocrolib.pseg2narray(data))
 
     @utils.check_aborted
     def get_transcript(self, line):
-        """
-        Recognise each individual line by writing it as a temporary
-        PNG and calling self.binary on the image.
-        """
+        """Recognise each individual line by writing it as a temporary
+        PNG and calling self.binary on the image."""
         with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
             tmp.close()
             self.write_binary(tmp.name, line)
@@ -262,10 +234,8 @@ class CommandLineRecognizerNode(LineRecognizerNode):
 
     @utils.check_aborted
     def process_line(self, imagepath):
-        """
-        Run OCR on image, using YET ANOTHER temporary
-        file to gather the output, which is then read back in.
-        """
+        """Run OCR on image, using YET ANOTHER temporary
+        file to gather the output, which is then read back in."""
         lines = []
         with tempfile.NamedTemporaryFile() as tmp:
             tmp.close()
@@ -291,22 +261,16 @@ class CommandLineRecognizerNode(LineRecognizerNode):
 
 
 class ImageGeneratorNode(node.Node):
-    """
-    Node which takes no input and returns an image.
-    """
+    """Node which takes no input and returns an image."""
     abstract = True
 
     def null_data(self):
-        """
-        Return an empty numpy image.
-        """
+        """Return an empty numpy image."""
         return ocrolib.numpy.zeros((640,480,3), dtype=ocrolib.numpy.uint8)
 
 
 class FileNode(node.Node):
-    """
-    Node which reads or writes to a file path.
-    """
+    """Node which reads or writes to a file path."""
     abstract = True
 
     def validate(self):

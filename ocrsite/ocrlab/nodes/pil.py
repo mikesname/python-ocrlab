@@ -85,11 +85,9 @@ class PilCrop(node.Node, base.BinaryPngWriterMixin):
     ]
 
     def process(self, input):
-        """
-        Crop an image, using IULIB.  If any of
+        """Crop an image, using IULIB.  If any of
         the parameters are -1 or less, use the
-        outer dimensions.
-        """
+        outer dimensions."""
         x0, y0 = 0, 0
         y1, x1 = input.shape
         try:
@@ -117,9 +115,7 @@ class PilCrop(node.Node, base.BinaryPngWriterMixin):
 
 
 class RGB2Gray(node.Node, base.GrayPngWriterMixin):
-    """
-    Convert (roughly) between a color image and BW.
-    """
+    """Convert (roughly) between a color image and BW."""
     stage = stages.FILTER_GRAY
     intypes = [numpy.ndarray]
     outtype = numpy.ndarray
@@ -131,18 +127,14 @@ class RGB2Gray(node.Node, base.GrayPngWriterMixin):
 
 
 class PilTest(node.Node):
-    """
-    Test PIL OPs.
-    """
+    """Test PIL OPs."""
     stage = stages.FILTER_BINARY
 
     def validate(self):
         super(PilTest, self).validate()
 
     def process(self, image):
-        """
-        No-op, for now.
-        """
+        """No-op, for now."""
         return image
 
 

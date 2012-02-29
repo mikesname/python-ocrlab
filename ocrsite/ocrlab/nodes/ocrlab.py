@@ -14,13 +14,9 @@ from .. import stages
 
 
 class Rectangle(object):
-    """
-    Rectangle class, Iulib-style.
-    """
+    """Rectangle class, Iulib-style."""
     def __init__(self, x0, y0, x1, y1):
-        """
-        Initialise a rectangle.
-        """
+        """Initialise a rectangle."""
         self.x0 = x0
         self.y0 = y0
         self.x1 = x1
@@ -219,19 +215,15 @@ def smooth(x,window_len=11,window='hanning'):
 
 
 def not_char(rect):
-    """
-    Perform basic validation on a rect to
-    test if it *could* be a character box.
-    """
+    """Perform basic validation on a rect to
+    test if it *could* be a character box."""
     return rect.area() < 4 or rect.area() > 10000 \
             or rect.aspect() < 0.2 or rect.aspect() > 5
 
 
 def horizontal_overlaps(rect, others, sorted=False):
-    """
-    Get rects that overlap horizontally with the
-    given rect.
-    """
+    """Get rects that overlap horizontally with the
+    given rect."""
     overlaps = []
     for other in others:
         # Note: can optimise to prevent
@@ -243,8 +235,7 @@ def horizontal_overlaps(rect, others, sorted=False):
 
 
 def get_average_line_height(top_bottoms):
-    """
-    Tricksy - get height of median line?
+    """Tricksy - get height of median line?
     """
     lheights = [b - t for t, b in top_bottoms]
     lhm = numpy.max(lheights)
@@ -255,10 +246,8 @@ def get_average_line_height(top_bottoms):
 
 
 def remove_border(narray, average_char_height):
-    """
-    Try and remove anything that's in a likely
-    border region and return the subimage.
-    """
+    """Try and remove anything that's in a likely
+    border region and return the subimage."""
     na = iulib.numpy(narray)
     hpr = na.sum(axis=0)
     vpr = na.sum(axis=1)
@@ -277,24 +266,18 @@ def remove_border(narray, average_char_height):
 
 
 def get_vertical_projection(narray):
-    """
-    Accumulate image columns.
-    """
+    """Accumulate image columns."""
     return iulib.numpy(narray).sum(axis=1)
 
 
 def get_horizontal_projection(narray):
-    """
-    Accumulate image rows.
-    """
+    """Accumulate image rows."""
     return iulib.numpy(narray).sum(axis=0)
 
 
 def high_pass_max(numpy_arr, maxscale):
-    """
-    Remove everything below 1/2 of the median
-    value.
-    """
+    """Remove everything below 1/2 of the median
+    value."""
     # remove noise
     max = numpy.max(numpy_arr)
     def hp(x, m):
@@ -303,10 +286,8 @@ def high_pass_max(numpy_arr, maxscale):
 
 
 def high_pass_median(numpy_arr, medscale):
-    """
-    Remove everything below 1/2 of the median
-    value.
-    """
+    """Remove everything below 1/2 of the median
+    value."""
     # remove noise
     median = numpy.median(numpy_arr)
     def hp(x, m):
@@ -315,9 +296,7 @@ def high_pass_median(numpy_arr, medscale):
 
 
 def get_lines_by_projection(narray, highpass=0.001):
-    """
-    Extract regions of blackness.
-    """
+    """Extract regions of blackness."""
     hpr = iulib.numpy(narray).sum(axis=0)
     hps = high_pass_max(hpr, highpass)
 
@@ -337,17 +316,13 @@ def get_lines_by_projection(narray, highpass=0.001):
 
 
 def large_or_odd(rect, avg):
-    """
-    An odd shape.
-    """
+    """An odd shape."""
     return rect.area() > (100 * avg * avg)  or rect.aspect() < 0.2 \
             or rect.aspect() > 10
 
 
 def strip_non_chars(narray, bboxes, average_height, inverted=True):
-    """
-    Remove stuff that isn't looking like a character box.
-    """
+    """Remove stuff that isn't looking like a character box."""
     outboxes = []
     color = 0 if inverted else 255
     for box in bboxes:
@@ -359,10 +334,8 @@ def strip_non_chars(narray, bboxes, average_height, inverted=True):
     
 
 def trimmed_mean(numpy_arr, lperc=0, hperc=0):
-    """
-    Get a trimmed mean value from array, with low and
-    high percentage ignored.
-    """
+    """Get a trimmed mean value from array, with low and
+    high percentage ignored."""
     alen = len(numpy_arr)
     return numpy_arr[(alen / 100 * lperc):
             (alen - (alen / 100 * hperc))].mean()
@@ -383,14 +356,11 @@ class SegmentPageByHint(node.Node, base.JSONWriterMixin):
     ]
 
     def null_data(self):
-        """
-        Return an empty list when ignored.
-        """
+        """Return an empty list when ignored."""
         return dict(columns=[], lines=[], paragraphs=[])
 
     def process(self, input):
-        """
-        Segment a binary image.
+        """Segment a binary image.
 
         input: a binary image.
         return: a dictionary of box types:
@@ -416,9 +386,7 @@ class SegmentPageByHint(node.Node, base.JSONWriterMixin):
         )
 
     def init(self):
-        """
-        Initialise on receipt of the input.
-        """
+        """Initialise on receipt of the input."""
         # pointer to the region that remains
         # to be segmented - starts at the top
         self.topptr = self.inarray.dim(1)
@@ -434,9 +402,7 @@ class SegmentPageByHint(node.Node, base.JSONWriterMixin):
         self.columns = []
 
     def calc_bounding_boxes(self):
-        """
-        Get bounding boxes if connected components.
-        """
+        """Get bounding boxes if connected components."""
         concomps = iulib.intarray()
         concomps.copy(self.inverted)
         iulib.label_components(concomps, False)
@@ -457,15 +423,11 @@ class SegmentPageByHint(node.Node, base.JSONWriterMixin):
         self.boxes = strip_non_chars(self.inverted, self.boxes, self.avgheight)
 
     def get_char_boxes(self, boxes):
-        """
-        Get character boxes.
-        """
+        """Get character boxes."""
         return [b for b in boxes if not not_char(b)]
 
     def get_header_line(self):
-        """
-        Get the first found line in an image.
-        """
+        """Get the first found line in an image."""
         boxes = self.get_char_boxes(self.boxes)
         # eliminate boxes above our top-of-the-page
         # pointer
@@ -496,9 +458,7 @@ class SegmentPageByHint(node.Node, base.JSONWriterMixin):
         self.topptr = line.y0
 
     def get_possible_columns(self, projection):
-        """
-        Extract regions of whiteness.
-        """
+        """Extract regions of whiteness."""
         regions = []
         gotcol = None
         count = 0
@@ -516,8 +476,7 @@ class SegmentPageByHint(node.Node, base.JSONWriterMixin):
         return regions
 
     def filter_columns(self, rects, target):
-        """
-        Filter a group of regions to match the target
+        """Filter a group of regions to match the target
         number, preserving those which seem the most
         likely to be 'good'
         """
@@ -533,8 +492,7 @@ class SegmentPageByHint(node.Node, base.JSONWriterMixin):
         return best
 
     def find_columns(self):
-        """
-        Get columns in a section of the image
+        """Get columns in a section of the image
         """
 
         portion = iulib.bytearray()
@@ -546,9 +504,7 @@ class SegmentPageByHint(node.Node, base.JSONWriterMixin):
         self.columns.extend(bestcols)
 
     def find_lines(self):
-        """
-        Get lines in a section of the images.
-        """
+        """Get lines in a section of the images."""
         for colrect in self.columns:
             newrect = Rectangle(colrect.x0, 0, colrect.x1, self.topptr)
             if newrect.area() < 1:
@@ -586,9 +542,7 @@ class SegmentPageByHint(node.Node, base.JSONWriterMixin):
 
 
 def get_coords(coordstr):
-    """
-    Return a list of rects from the coords string.
-    """
+    """Return a list of rects from the coords string."""
     if coordstr is None:
         return []
     rstr = coordstr.split("~")
@@ -606,9 +560,7 @@ def get_coords(coordstr):
     return rects
 
 def sanitise_coords(rectlist, width, height):
-    """
-    Treat negative numbers as the outer bound.
-    """
+    """Treat negative numbers as the outer bound."""
     def sanitise(rect):
         rect.x0 = max(rect.x0, 0)
         rect.y0 = max(rect.y0, 0)
@@ -648,14 +600,11 @@ class SegmentPageManual(node.Node, base.JSONWriterMixin):
         self._segmenter = ocrolib.SegmentPageByRAST1()
 
     def null_data(self):
-        """
-        Return an empty list when ignored.
-        """
+        """Return an empty list when ignored."""
         return dict(columns=[], lines=[], paragraphs=[])
 
     def process(self, binary):
-        """
-        Segment a binary image.
+        """Segment a binary image.
 
         input: a binary image.
         return: a dictionary of box types:
@@ -687,17 +636,13 @@ class SegmentPageManual(node.Node, base.JSONWriterMixin):
         return boxes
 
     def segment_portion(self, portion, dx, dy, pheight):
-        """
-        Segment a single-column chunk.
-        """
+        """Segment a single-column chunk."""
         page_seg = self._segmenter.segment(ocrolib.narray2numpy(portion))
         return self.extract_boxes(self._regions, page_seg, dx, dy, pheight)
 
     @classmethod
     def extract_boxes(cls, regions, page_seg, dx, dy, pheight):
-        """
-        Extract line/paragraph geoocrolib.metry info.
-        """
+        """Extract line/paragraph geoocrolib.metry info."""
         out = dict(columns=[], lines=[], paragraphs=[])
         #out = dict(lines=[], paragraphs=[])
         exfuncs = dict(lines=regions.setPageLines,
@@ -721,11 +666,9 @@ class BlockOut(node.Node, base.BinaryPngWriterMixin):
     parameters = [dict(name="boxes", value=""),]
 
     def process(self, input):
-        """
-        Blockout an image, using PIL.  If any of
+        """Blockout an image, using PIL.  If any of
         the parameters are -1 or less, use the
-        outer dimensions.
-        """
+        outer dimensions."""
         height = input.shape[0]
         pstr = self._params.get("boxes", "")
         coords = get_coords(pstr) 

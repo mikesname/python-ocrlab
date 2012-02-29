@@ -21,9 +21,7 @@ from ocrolib import numpy
 
 
 class TesseractRecognizer(base.CommandLineRecognizerNode):
-    """
-    Recognize an image using Tesseract.
-    """
+    """Recognize an image using Tesseract."""
     stage = stages.RECOGNIZE
     binary = "tesseract"
 
@@ -38,18 +36,14 @@ class TesseractRecognizer(base.CommandLineRecognizerNode):
         ]
 
     def validate(self):
-        """
-        Check we're in a good state.
-        """
+        """Check we're in a good state."""
         super(TesseractRecognizer, self).validate()
         if self._params.get("language_model", "").strip() == "":
             raise exceptions.ValidationError("no language model given: %s" % self._params, self)
 
     def prepare(self):
-        """
-        Extract the lmodel to a temporary directory.  This is
-        cleaned up in the destructor.
-        """
+        """Extract the lmodel to a temporary directory.  This is
+        cleaned up in the destructor."""
         if not hasattr(self, "_tessdata") is None:
             modpath = os.path.join(self.get_helper_dir("lang"), 
                     self._params["language_model"])
@@ -59,12 +53,10 @@ class TesseractRecognizer(base.CommandLineRecognizerNode):
 
     @utils.check_aborted
     def get_transcript(self, line):
-        """
-        Recognise each individual line by writing it as a temporary
+        """Recognise each individual line by writing it as a temporary
         PNG, converting it to Tiff, and calling Tesseract on the
         image.  Unfortunately I can't get the current stable
-        Tesseract 2.04 to support anything except TIFFs.
-        """
+        Tesseract 2.04 to support anything except TIFFs."""
         with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
             tmp.close()
             self.write_binary(tmp.name, line)
@@ -75,11 +67,9 @@ class TesseractRecognizer(base.CommandLineRecognizerNode):
             return text
 
     def unpack_tessdata(self, lmodelpath):
-        """
-        Unpack the tar-gzipped Tesseract language files into
+        """Unpack the tar-gzipped Tesseract language files into
         a temporary directory and set TESSDATA_PREFIX environ
-        var to point at it.
-        """
+        var to point at it."""
         # might as well make this even less efficient!
         self.logger.debug("Unpacking tessdata: %s" % lmodelpath)
         import tarfile
@@ -98,13 +88,11 @@ class TesseractRecognizer(base.CommandLineRecognizerNode):
 
     @utils.check_aborted
     def process_line(self, imagepath):
-        """
-        Run Tesseract on the TIFF image, using YET ANOTHER temporary
+        """Run Tesseract on the TIFF image, using YET ANOTHER temporary
         file to gather the output, which is then read back in.  If
         you think this seems horribly inefficient you'd be right, but
         Tesseract's external interface is quite inflexible.
-        TODO: Fix hardcoded path to Tesseract.
-        """
+        TODO: Fix hardcoded path to Tesseract."""
         if not hasattr(self, "_tessdata"):
             self.init_converter()
 
@@ -129,9 +117,7 @@ class TesseractRecognizer(base.CommandLineRecognizerNode):
         return " ".join(lines)
 
     def cleanup(self):
-        """
-        Cleanup temporarily-extracted lmodel directory.
-        """
+        """Cleanup temporarily-extracted lmodel directory."""
         if hasattr(self, "_tessdata") and os.path.exists(self._tessdata):
             try:
                 self.logger.debug(
@@ -143,9 +129,7 @@ class TesseractRecognizer(base.CommandLineRecognizerNode):
 
 
 class TesseractPageSeg(TesseractRecognizer):
-    """
-    Recognize an image using Tesseract, including segmentation.
-    """
+    """Recognize an image using Tesseract, including segmentation."""
     intypes = [numpy.ndarray]
 
     def __init__(self, *args, **kwargs):
@@ -153,7 +137,7 @@ class TesseractPageSeg(TesseractRecognizer):
         self._configtmp = None
 
     def get_command(self, outfile, image):
-        """Simple tesseract command line"""
+        """Simple tesseract command line."""
         args = [self.binary, image, os.path.splitext(outfile)[0]]
         if self._lang is not None:
             args.extend(["-l", self._lang])
@@ -173,10 +157,7 @@ class TesseractPageSeg(TesseractRecognizer):
         os.unlink(self._configtmp)
 
     def process(self, binary):
-        """
-        Convert a full page.
-        """
-
+        """Convert a full page."""
         self.prepare()
 
         hocr = None

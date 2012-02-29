@@ -32,10 +32,8 @@ class NoOp(node.Node, writable_node.WritableNodeMixin):
 
 
     def set_input(self, num, n):
-        """
-        Override the base set input to dynamically change our
-        in and out types.
-        """
+        """Override the base set input to dynamically change our
+        in and out types."""
         super(NoOp, self).set_input(num, n)
         self.intypes = [self._inputs[num].outtype]
         self.outtype = self._inputs[num].outtype
@@ -48,9 +46,7 @@ class NoOp(node.Node, writable_node.WritableNodeMixin):
 
 
 class FindReplace(node.Node, base.TextWriterMixin):
-    """
-    Find an replace stuff in input with output.
-    """
+    """Find an replace stuff in input with output."""
     stage = stages.UTILS
     intypes = [types.HocrString]
     outtype = types.HocrString
@@ -76,8 +72,7 @@ class FindReplace(node.Node, base.TextWriterMixin):
         return self._findre.sub(self._replace, data)
 
     def process(self, xml):
-        """
-        Run find/replace on input
+        """Run find/replace on input
         """
         find = self._params.get("find", "")
         replace = self._params.get("replace", "")
@@ -91,9 +86,7 @@ class FindReplace(node.Node, base.TextWriterMixin):
 
 
 class HocrToText(node.Node, base.TextWriterMixin):
-    """
-    Convert HOCR to text.
-    """
+    """Convert HOCR to text."""
     stage = stages.UTILS
     intypes = [unicode]
     outtype = unicode
@@ -108,9 +101,7 @@ class HocrToText(node.Node, base.TextWriterMixin):
 
 
 class TextFileIn(base.FileNode, base.TextWriterMixin):
-    """
-    Read a text file.  That's it.
-    """
+    """Read a text file.  That's it."""
     stage = stages.INPUT
     intypes = []
     outtype = unicode
@@ -122,9 +113,7 @@ class TextFileIn(base.FileNode, base.TextWriterMixin):
 
 
 class Switch(node.Node, writable_node.WritableNodeMixin):
-    """
-    Node which passes through its selected input.
-    """
+    """Node which passes through its selected input."""
     stage = stages.UTILS
     intypes = [object, object]
     outtype = type(None)
@@ -154,10 +143,8 @@ class Switch(node.Node, writable_node.WritableNodeMixin):
         return self.eval_input(input)
 
     def set_input(self, num, n):
-        """
-        Override the base set input to dynamically change our
-        in and out types.
-        """
+        """Override the base set input to dynamically change our
+        in and out types."""
         super(Switch, self).set_input(num, n)
         input = int(self._params.get("input", 0))
         if input == num:
@@ -176,26 +163,20 @@ class Switch(node.Node, writable_node.WritableNodeMixin):
         return "%s%s" % (self.input(input), self.extension)
 
     def writer(self, fh, data):
-        """
-        Pass through the writer function from the selected node.
-        """
+        """Pass through the writer function from the selected node."""
         input = int(self._params.get("input", 0))
         if self.input(input):
             return self.input(input).writer(fh, data)
         
     def reader(self, fh):
-        """
-        Pass through the writer function from the selected node.
-        """
+        """Pass through the writer function from the selected node."""
         input = int(self._params.get("input", 0))
         if self.input(input):
             return self.input(input).reader(fh)
         
 
 class FileOut(node.Node, writable_node.WritableNodeMixin):
-    """
-    A node that writes a file to disk.
-    """
+    """A node that writes a file to disk."""
     stage = stages.OUTPUT
     outtype = type(None)
     parameters = [
@@ -204,24 +185,18 @@ class FileOut(node.Node, writable_node.WritableNodeMixin):
     ]
 
     def validate(self):
-        """
-        Check params are OK.
-        """
+        """Check params are OK."""
         if self._params.get("path") is None:
             raise exceptions.ValidationError("'path' not set", self)
 
     def set_input(self, num, n):
-        """
-        Override the base set input to dynamically change our
-        in and out types.
-        """
+        """Override the base set input to dynamically change our
+        in and out types."""
         super(FileOut, self).set_input(num, n)
         self.outtype = self._inputs[num].outtype
 
     def null_data(self):
-        """
-        Return the input.
-        """
+        """Return the input."""
         next = self.first_active()
         if next is not None:
             return next.eval()
@@ -232,23 +207,17 @@ class FileOut(node.Node, writable_node.WritableNodeMixin):
         return "%s%s" % (self, self.extension)
 
     def writer(self, fh, data):
-        """
-        Pass through the writer function from the selected node.
-        """
+        """Pass through the writer function from the selected node."""
         if self.input(0):
             return self.input(0).writer(fh, data)
         
     def reader(self, fh):
-        """
-        Pass through the writer function from the selected node.
-        """
+        """Pass through the writer function from the selected node."""
         if self.input(0):
             return self.input(0).reader(fh)
         
     def process(self, input):
-        """
-        Write the input to the given path.
-        """
+        """Write the input to the given path."""
         if input is None:
             return
         if not os.environ.get("NODETREE_WRITE_FILEOUT"):
@@ -262,9 +231,7 @@ class FileOut(node.Node, writable_node.WritableNodeMixin):
 
 
 class TextEvaluation(node.Node, base.TextWriterMixin):
-    """
-    Evaluate two text inputs with ISRI accuracy program.
-    """
+    """Evaluate two text inputs with ISRI accuracy program."""
     stage = stages.UTILS
     intypes = [unicode, unicode]
     outtype = unicode
@@ -289,9 +256,7 @@ class TextEvaluation(node.Node, base.TextWriterMixin):
 
 
 class TextDiff(node.Node, base.TextWriterMixin):
-    """
-    Do a side-by-side.
-    """
+    """Do a side-by-side."""
     stage = stages.UTILS
     intypes = [unicode, unicode]
     outtype = unicode
@@ -313,9 +278,7 @@ class TextDiff(node.Node, base.TextWriterMixin):
 
 
 class AbbyyXmlToHocr(node.Node, base.TextWriterMixin):
-    """
-    Convert Abbyy XML to HOCR.
-    """
+    """Convert Abbyy XML to HOCR."""
     stage = stages.UTILS
     intypes = [unicode]
     outtype = unicode

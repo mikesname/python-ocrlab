@@ -17,9 +17,7 @@ class WebServiceNodeError(exceptions.NodeError):
 
 
 class BaseWebService(node.Node, base.TextWriterMixin):
-    """
-    Base class for web service nodes.
-    """
+    """Base class for web service nodes."""
     abstract = True
     stage = stages.POST
     intypes = [unicode]
@@ -27,9 +25,7 @@ class BaseWebService(node.Node, base.TextWriterMixin):
 
 
 class MashapeProcessing(BaseWebService):
-    """
-    Mashape entity extraction.
-    """
+    """Mashape entity extraction."""
     stage = stages.POST
     baseurl = "http://text-processing.com/api/"
     parameters = [
@@ -61,9 +57,7 @@ class MashapeProcessing(BaseWebService):
 
 
 class DBPediaAnnotate(BaseWebService):
-    """
-    Mashape entity extraction.
-    """
+    """Mashape entity extraction."""
     stage = stages.POST
     baseurl = "http://spotlight.dbpedia.org/rest/annotate/"
     parameters = [
@@ -92,9 +86,7 @@ class DBPediaAnnotate(BaseWebService):
 
 
 class OpenCalais(BaseWebService):
-    """
-    OpenCalias sematic markup.
-    """
+    """OpenCalias sematic markup."""
     stage = stages.POST
     baseurl =  "http://api.opencalais.com/tag/rs/enrich"
     parameters = [

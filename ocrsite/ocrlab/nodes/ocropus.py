@@ -32,9 +32,7 @@ def makesafe(val):
 
 class GrayFileIn(base.ImageGeneratorNode,
             base.FileNode, base.GrayPngWriterMixin):
-    """
-    A node that takes a file and returns a numpy object.
-    """
+    """A node that takes a file and returns a numpy object."""
     stage = stages.INPUT
     intypes = []
     outtype = ocrolib.numpy.ndarray
@@ -48,9 +46,7 @@ class GrayFileIn(base.ImageGeneratorNode,
         
 
 class Crop(node.Node, base.BinaryPngWriterMixin):
-    """
-    Crop a PNG input.
-    """
+    """Crop a PNG input."""
     stage = stages.FILTER_BINARY
     intypes = [ocrolib.numpy.ndarray]
     outtype = ocrolib.numpy.ndarray
@@ -62,11 +58,9 @@ class Crop(node.Node, base.BinaryPngWriterMixin):
     ]
 
     def process(self, input):
-        """
-        Crop an image, using IULIB.  If any of
+        """Crop an image, using IULIB.  If any of
         the parameters are -1 or less, use the
-        outer dimensions.
-        """
+        outer dimensions."""
         x0, y0 = 0, 0
         y1, x1 = input.shape
         try:
@@ -95,36 +89,26 @@ class Crop(node.Node, base.BinaryPngWriterMixin):
 
 
 class OcropusBase(node.Node):
-    """
-    Wrapper around Ocropus component interface.
-    """
+    """Wrapper around Ocropus component interface."""
     abstract = True
     _comp = None
 
     def __init__(self, **kwargs):
-        """
-        Initialise with the ocropus component.
-        """
+        """Initialise with the ocropus component."""
         super(OcropusBase, self).__init__(**kwargs)
 
     def _set_p(self, p, v):
-        """
-        Set a component param.
-        """
+        """Set a component param."""
         self._comp.pset(makesafe(p), makesafe(v))
 
     def __getstate__(self):
-        """
-        Used when pickled.  Here we simply ignore the
+        """Used when pickled.  Here we simply ignore the
         internal component, which itself contains an
-        unpickleable C++ type.
-        """
+        unpickleable C++ type."""
         return super(OcropusBase, self).__dict__
 
     def validate(self):
-        """
-        Check state of the inputs.
-        """
+        """Check state of the inputs."""
         self.logger.debug("%s: validating...", self)
         super(OcropusBase, self).validate()
         for i in range(len(self._inputs)):
@@ -134,9 +118,7 @@ class OcropusBase(node.Node):
     @nodeutils.ClassProperty
     @classmethod
     def parameters(cls):
-        """
-        Get parameters from an Ocropus Node.
-        """
+        """Get parameters from an Ocropus Node."""
         def makesafe(v):
             if v is None:
                 return 0
@@ -152,21 +134,17 @@ class OcropusBase(node.Node):
 
 
 class OcropusBinarizeBase(OcropusBase, base.BinaryPngWriterMixin):
-    """
-    Binarize an image with an Ocropus component.
-    """
+    """Binarize an image with an Ocropus component."""
     abstract = True
     stage = stages.BINARIZE
     intypes = [ocrolib.numpy.ndarray]
     outtype = ocrolib.numpy.ndarray
 
     def process(self, input):
-        """
-        Perform binarization on an image.
+        """Perform binarization on an image.
         
         input: a grayscale image.
-        return: a binary image.
-        """
+        return: a binary image."""
         # NB. The Ocropus binarize function
         # returns a tuple: (binary, gray)
         # we ignore the latter.
@@ -178,23 +156,18 @@ class OcropusBinarizeBase(OcropusBase, base.BinaryPngWriterMixin):
 
 
 class OcropusSegmentPageBase(OcropusBase, base.JSONWriterMixin):
-    """
-    Segment an image using Ocropus.
-    """
+    """Segment an image using Ocropus."""
     abstract = True
     stage = stages.PAGE_SEGMENT
     intypes = [ocrolib.numpy.ndarray]
     outtype = dict
 
     def null_data(self):
-        """
-        Return an empty list when ignored.
-        """
+        """Return an empty list when ignored."""
         return dict(columns=[], lines=[], paragraphs=[])
 
     def process(self, input):
-        """
-        Segment a binary image.
+        """Segment a binary image.
 
         input: a binary image.
         return: a dictionary of box types:
@@ -223,9 +196,7 @@ class OcropusSegmentPageBase(OcropusBase, base.JSONWriterMixin):
 
 
 class OcropusGrayscaleFilterBase(OcropusBase, base.GrayPngWriterMixin):
-    """
-    Filter a binary image.
-    """
+    """Filter a binary image."""
     abstract = True
     stage = stages.FILTER_GRAY
     intypes = [ocrolib.numpy.ndarray]
@@ -241,9 +212,7 @@ class OcropusGrayscaleFilterBase(OcropusBase, base.GrayPngWriterMixin):
 
 
 class OcropusBinaryFilterBase(OcropusBase, base.BinaryPngWriterMixin):
-    """
-    Filter a binary image.
-    """
+    """Filter a binary image."""
     abstract = True
     stage = stages.FILTER_BINARY
     intypes = [ocrolib.numpy.ndarray]
@@ -283,9 +252,7 @@ class OcropusRecognizer(base.LineRecognizerNode):
             raise exceptions.ValidationError("no language model given: %s" % self._params, self)
 
     def init_converter(self):
-        """
-        Load the line-recogniser and the lmodel FST objects.
-        """
+        """Load the line-recogniser and the lmodel FST objects."""
         try:
             self._linerec = ocrolib.RecognizeLine()
             cmodpath = os.path.join(self.get_helper_dir("char"), 
@@ -302,10 +269,8 @@ class OcropusRecognizer(base.LineRecognizerNode):
 
     @utils.check_aborted
     def get_transcript(self, line):
-        """
-        Run line-recognition on an ocrolib.iulib.bytearray images of a
-        single line.
-        """
+        """Run line-recognition on an ocrolib.iulib.bytearray images of a
+        single line."""
         if not hasattr(self, "_lmodel"):
             self.init_converter()
         fst = self._linerec.recognizeLine(line)
@@ -314,9 +279,7 @@ class OcropusRecognizer(base.LineRecognizerNode):
         return out
 
 class Manager(object):
-    """
-    Interface to ocropus.
-    """
+    """Interface to ocropus."""
     _use_types = (
         "IBinarize",
         "ISegmentPage",
@@ -329,26 +292,20 @@ class Manager(object):
 
     @classmethod
     def get_components(cls, oftypes=None, withnames=None, exclude=None):
-        """
-        Get a datastructure contraining all Ocropus components
-        (possibly of a given type) and their default parameters.
-        """
+        """Get a datastructure contraining all Ocropus components
+        (possibly of a given type) and their default parameters."""
         return cls._get_native_components(oftypes, withnames, exclude=exclude)
     
     
     @classmethod
     def get_node(cls, name, **kwargs):
-        """
-        Get a node by the given name.
-        """
+        """Get a node by the given name."""
         klass = cls.get_node_class(name)
         return klass(**kwargs)
 
     @classmethod
     def get_node_class(cls, name, comps=None):
-        """
-        Get a node class for the given name.
-        """
+        """Get a node class for the given name."""
         # if we get a qualified name like
         # Ocropus::Recognizer, remove the
         # path, since we ASSume that we're
@@ -389,9 +346,7 @@ class Manager(object):
 
     @classmethod
     def get_nodes(cls, *oftypes, **kwargs):
-        """
-        Get nodes of the given type.
-        """
+        """Get nodes of the given type."""
         rawcomps = cls.get_components(oftypes=cls._use_types, exclude=cls._ignored)
         return [cls.get_node_class(comp.__class__.__name__, comps=rawcomps) \
                 for comp in rawcomps]
@@ -400,10 +355,8 @@ class Manager(object):
 
     @classmethod
     def _get_native_components(cls, oftypes=None, withnames=None, exclude=None):
-        """
-        Get a datastructure contraining all Ocropus native components
-        (possibly of a given type) and their default parameters.
-        """
+        """Get a datastructure contraining all Ocropus native components
+        (possibly of a given type) and their default parameters."""
         out = []
         clist = ocrolib.ComponentList()
         for i in range(clist.length()):

@@ -8,9 +8,7 @@ import numpy
 
 
 class Rotate90(node.Node, GrayPngWriterMixin):
-    """
-    Rotate a Numpy image num*90 degrees counter-clockwise.
-    """
+    """Rotate a Numpy image num*90 degrees counter-clockwise."""
     stage = stages.FILTER_BINARY
     intypes = [numpy.ndarray]
     outtype = numpy.ndarray
@@ -33,9 +31,7 @@ class Rotate90(node.Node, GrayPngWriterMixin):
 
 
 class Rotate90Gray(Rotate90):
-    """
-    Grayscale version of above.
-    """
+    """Grayscale version of above."""
     stage = stages.FILTER_GRAY
 
 

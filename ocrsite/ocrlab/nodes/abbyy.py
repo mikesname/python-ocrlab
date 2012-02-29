@@ -17,9 +17,7 @@ from .. import utils, stages, types
 
 
 class AbbyyRecognizer(base.CommandLineRecognizerNode):
-    """
-    Recognize an image using Abbyy Finereader.
-    """
+    """Recognize an image using Abbyy Finereader."""
     binary = "abbyyocr"
     stage = stages.RECOGNIZE
     intypes = [numpy.ndarray]
@@ -30,9 +28,7 @@ class AbbyyRecognizer(base.CommandLineRecognizerNode):
     ]
 
     def get_command(self, outfile, image):
-        """
-        Cuneiform command line.  Simplified for now.
-        """
+        """Cuneiform command line.  Simplified for now."""
         args = [self.binary]
         if self._params.get("invert_image", False):
             args.append("--invertImage")
@@ -44,19 +40,15 @@ class AbbyyRecognizer(base.CommandLineRecognizerNode):
         return args
 
     def set_image_dpi(self, image):
-        """
-        Hack to set 300 PPI on all images.  This should hopefully
+        """Hack to set 300 PPI on all images.  This should hopefully
         prevent FR from using up thousands of pages of license
-        if there's no resolution header available.
-        """
+        if there's no resolution header available."""
         p = sp.Popen(["convert", "-units", "PixelsPerInch",
                 "-density", "300", image, image])
         return p.wait()
 
     def process(self, binary):
-        """
-        Convert a full page.
-        """
+        """Convert a full page."""
         hocr = ""
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.close()

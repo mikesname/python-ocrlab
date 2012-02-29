@@ -19,9 +19,7 @@ from .. import stages, types, utils
 
 
 class CuneiformRecognizer(base.CommandLineRecognizerNode):
-    """
-    Recognize an image using Cuneiform.
-    """
+    """Recognize an image using Cuneiform."""
     binary = "cuneiform"
     stage = stages.RECOGNIZE
     intypes = [numpy.ndarray]
@@ -30,18 +28,14 @@ class CuneiformRecognizer(base.CommandLineRecognizerNode):
     ]
 
     def get_command(self, outfile, image):
-        """
-        Cuneiform command line.  Simplified for now.
-        """
+        """Cuneiform command line.  Simplified for now."""
         args = [self.binary, "-f", "hocr", "-o", outfile]
         if self._params.get("single_column", False):
             args.extend(["--singlecolumn"])
         return args + [image]
 
     def process(self, binary):
-        """
-        Convert a full page.
-        """
+        """Convert a full page."""
         hocr = None
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             tmp.close()
