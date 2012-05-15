@@ -1,4 +1,4 @@
-"""Base class for Ocrlab models.  This shouldn't do anything fancy."""
+"""Base class for Portal models."""
 
 import datetime
 from django.db import models
